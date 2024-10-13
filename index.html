@@ -93,22 +93,33 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-image: url('book.png');
-            background-size: cover;
-            background-position: center;
             flex-wrap: wrap;
             color: black; /* Task text color */
             font-family: "Times New Roman", Times, serif;
         }
         
-        .task-text, .task-date, .task-time, .delete {
-            color: black; /* Text color for task details */
-            font-family: "Times New Roman", Times, serif;
+        .task-details {
+            flex-grow: 1;
+            text-align: left;
+            background-image: url('book.png');
+            background-size: cover;
+            background-position: center;
+            padding: 10px;
+            border-radius: 4px;
+            margin-right: 10px;
         }
-        
+
         .delete {
-            cursor: url('feather-quill.png'), pointer;
-            margin-left: 10px;
+            cursor: pointer;
+            padding: 5px 10px;
+            background-color: transparent; /* Remove background */
+            color: black; /* Button text color */
+            border: none; /* No border */
+            border-radius: 4px;
+        }
+
+        .delete:hover {
+            color: #dc3545; /* Change text color on hover to red */
         }
         
         .checkbox {
@@ -118,7 +129,16 @@
         .checkbox input {
             margin-right: 10px;
         }
-        
+
+        .completed-section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .completed-section h2 {
+            color: black; /* Header color for completed tasks */
+        }
+
     </style>
 </head>
 <body>
@@ -132,6 +152,11 @@
         </div>
         <ul id="task-list">
         </ul>
+        <div class="completed-section">
+            <h2>Completed Tasks</h2>
+            <ul id="completed-task-list">
+            </ul>
+        </div>
     </div>
     <script>
         document.getElementById('add-task').addEventListener('click', function() {
@@ -147,22 +172,41 @@
                 checkbox.type = 'checkbox';
                 checkbox.classList.add('checkbox');
                 checkbox.onclick = function() {
-                    li.classList.toggle('completed');
+                    if (checkbox.checked) {
+                        // Move task to completed tasks
+                        const completedLi = document.createElement('li');
+                        completedLi.classList.add('completed-task-item');
+
+                        const completedDetailsDiv = document.createElement('div');
+                        completedDetailsDiv.classList.add('task-details');
+                        completedDetailsDiv.innerHTML = `<span class="task-text">${taskText}</span><br>
+                                                         <span class="task-date">${taskDate ? `Due: ${taskDate}` : 'No due date'}</span><br>
+                                                         <span class="task-time">${taskTime ? `Time: ${taskTime}` : 'No time set'}</span>`;
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.classList.add('delete');
+                        deleteButton.onclick = function() {
+                            completedLi.remove();
+                        };
+
+                        completedLi.appendChild(completedDetailsDiv);
+                        completedLi.appendChild(deleteButton);
+                        document.getElementById('completed-task-list').appendChild(completedLi);
+                        li.remove(); // Remove from active tasks
+                    } else {
+                        // If unchecked, remove from completed tasks and add back to active tasks
+                        // (You might want to implement this functionality)
+                    }
                 };
 
-                const span = document.createElement('span');
-                span.textContent = taskText;
-                span.classList.add('task-text');
+                const detailsDiv = document.createElement('div');
+                detailsDiv.classList.add('task-details');
+                detailsDiv.innerHTML = `<span class="task-text">${taskText}</span><br>
+                                        <span class="task-date">${taskDate ? `Due: ${taskDate}` : 'No due date'}</span><br>
+                                        <span class="task-time">${taskTime ? `Time: ${taskTime}` : 'No time set'}</span>`;
 
-                const dateSpan = document.createElement('span');
-                dateSpan.textContent = taskDate ? `Due: ${taskDate}` : 'No due date';
-                dateSpan.classList.add('task-date');
-
-                const timeSpan = document.createElement('span');
-                timeSpan.textContent = taskTime ? `Time: ${taskTime}` : 'No time set';
-                timeSpan.classList.add('task-time');
-
-                const deleteButton = document.createElement('span');
+                const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
                 deleteButton.classList.add('delete');
                 deleteButton.onclick = function() {
@@ -170,9 +214,7 @@
                 };
 
                 li.appendChild(checkbox);
-                li.appendChild(span);
-                li.appendChild(dateSpan);
-                li.appendChild(timeSpan);
+                li.appendChild(detailsDiv);
                 li.appendChild(deleteButton);
                 document.getElementById('task-list').appendChild(li);
 
