@@ -16,6 +16,7 @@
             height: 100vh;
             margin: 0;
             cursor: url('feather-quill.png'), auto;
+            color: black; /* Default text color */
         }
         
         .container {
@@ -25,13 +26,15 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            width: 350px;
             text-align: center;
             background-color: rgba(233, 168, 127, 0.962); 
+            color: black; /* Text color */
         }
         
         h1 {
             margin-bottom: 20px;
+            color: black; /* Header color */
         }
         
         .input-container {
@@ -40,28 +43,27 @@
             margin-bottom: 20px;
         }
         
-        input[type="text"] {
-            width: 70%;
+        input[type="text"], input[type="date"], input[type="time"] {
+            width: 60%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             background-image: url('book.png');
             background-size: cover;
             background-position: center;
-            color: rgba(233, 168, 127, 0.962); /* Placeholder text color */
+            color: black; /* Input text color */
         }
         
-        input[type="text"]::placeholder {
-            color: rgba(233, 168, 127, 0.962); /* Placeholder text color */
-            cursor: url('feather-quill.png'), auto; /* Cursor style */
+        input[type="text"]::placeholder, input[type="date"]::placeholder, input[type="time"]::placeholder {
+            color: black; /* Placeholder text color */
         }
         
         button {
-            width: 25%;
+            width: 30%;
             padding: 10px;
             border: none;
             background-color: #28a745;
-            color: #fff;
+            color: black; /* Button text color */
             border-radius: 4px;
             cursor: pointer;
             background-image: url('book.png');
@@ -76,6 +78,7 @@
         ul {
             list-style-type: none;
             padding: 0;
+            color: black; /* List text color */
         }
         
         li {
@@ -90,15 +93,15 @@
             background-image: url('book.png');
             background-size: cover;
             background-position: center;
+            flex-wrap: wrap;
+            color: black; /* Task text color */
         }
         
-        .task-text {
-            flex-grow: 1;
-            margin-right: 10px;
+        .task-text, .task-date, .task-time, .delete {
+            color: black; /* Text color for task details */
         }
         
         .delete {
-            color: #dc3545;
             cursor: url('feather-quill.png'), pointer;
             margin-left: 10px;
         }
@@ -118,6 +121,8 @@
         <h1>To-Do List</h1>
         <div class="input-container">
             <input type="text" id="new-task" placeholder="Add a new task...">
+            <input type="date" id="task-date">
+            <input type="time" id="task-time">
             <button id="add-task">Add</button>
         </div>
         <ul id="task-list">
@@ -126,6 +131,9 @@
     <script>
         document.getElementById('add-task').addEventListener('click', function() {
             const taskText = document.getElementById('new-task').value;
+            const taskDate = document.getElementById('task-date').value;
+            const taskTime = document.getElementById('task-time').value;
+            
             if (taskText.trim() !== '') {
                 const li = document.createElement('li');
                 li.classList.add('task-item');
@@ -141,6 +149,14 @@
                 span.textContent = taskText;
                 span.classList.add('task-text');
 
+                const dateSpan = document.createElement('span');
+                dateSpan.textContent = taskDate ? `Due: ${taskDate}` : 'No due date';
+                dateSpan.classList.add('task-date');
+
+                const timeSpan = document.createElement('span');
+                timeSpan.textContent = taskTime ? `Time: ${taskTime}` : 'No time set';
+                timeSpan.classList.add('task-time');
+
                 const deleteButton = document.createElement('span');
                 deleteButton.textContent = 'Delete';
                 deleteButton.classList.add('delete');
@@ -150,11 +166,14 @@
 
                 li.appendChild(checkbox);
                 li.appendChild(span);
+                li.appendChild(dateSpan);
+                li.appendChild(timeSpan);
                 li.appendChild(deleteButton);
                 document.getElementById('task-list').appendChild(li);
 
                 document.getElementById('new-task').value = '';
-                li.style.backgroundImage = "url('book.png')";
+                document.getElementById('task-date').value = '';
+                document.getElementById('task-time').value = '';
             }
         });
     </script>
